@@ -23,7 +23,6 @@ void DisplayHandler::update(LiquidCrystal_I2C lcd){
     for(int i = 0; i < 4; i++){
         lcd.setCursor(0,i);
         lcd.print(lines[i]);
-        Serial.println(lines[i]);
     }
 }
 

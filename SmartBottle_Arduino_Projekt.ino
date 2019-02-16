@@ -69,3 +69,22 @@ LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE
 
 
 
+
+
+    // Serial.println("---------------------------------------");
+    // Serial.println("-----------------LINES-----------------");
+    // Serial.println("-----------------VVVVV-----------------");
+    // Serial.println(lines[0]);
+    // Serial.println(lines[1]);
+    // Serial.println(lines[2]);
+    // Serial.println(lines[3]);
+    // Serial.println("---------------------------------------");
+
+    // Serial.println("---------------------------------------");
+    // Serial.println("-----------------getName-----------------");
+    // Serial.println("-----------------VVVVV-----------------");
+    // Serial.println(this->menuItems[currentItem][0].getName());
+    // Serial.println(this->menuItems[currentItem][1].getName());
+    // Serial.println(this->menuItems[currentItem][2].getName());
+    // Serial.println(this->menuItems[currentItem][3].getName());
+    // Serial.println("---------------------------------------");

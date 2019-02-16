@@ -35,7 +35,15 @@ void DisplayHandler::display(String lines[4]){
         }
     }
 
-    
+
+
+    // Serial.println("-----------------LINES-----------------");
+    // Serial.println(this->lines[0]);
+    // Serial.println(this->lines[1]);
+    // Serial.println(this->lines[2]);
+    // Serial.println(this->lines[3]);
+    // Serial.println("---------------------------------------");
+
 }
 
 

@@ -23,7 +23,7 @@ void setup() {
 
 void loop() {
     encoder.update();
-    displayHandler.update(lcd);
+    
 }
 
 

@@ -30,7 +30,7 @@ void LoadCell::setCalibrationFactor(int calibrationFactor){
 
 float LoadCell::getWeight(){
 
-  float weight = this->scale.get_units(4);
+  float weight = this->scale.get_units(5);
 
   if (weight < 0) {
     return 0;

@@ -1,18 +1,22 @@
 class Navigator{
 
     public:
+        int getCurrentItem();
+        int getCurrentSubItem();
         void change(int direction);
         void click();
         void reset();
+        void navigate();
         Navigator();
 
     private:
         int currentMode = 0; // 0 = Hauptmenü, 1 = Submenü, 2 = aktives Subprogramm
-        int currentItem;
-        int currentSubItem;
+        int currentItem = 0;
+        int currentSubItem = 0;
         MenuItem menuItems[5][4];
         
 };
+
 
 Navigator::Navigator(){
 
@@ -31,23 +35,24 @@ Navigator::Navigator(){
 
     //SUB MENU - OVERVIEW
     menuItems[0][1] =  MenuItem();
-    menuItems[0][1].setName("Getrunken:      ");
+    menuItems[0][1].setName("Getrunken:");
 
     menuItems[0][2] =  MenuItem();
-    menuItems[0][2].setName("Im Koerper:     ");
+    menuItems[0][2].setName("Alkoholpegel:");
 
     menuItems[0][3] =  MenuItem();
-    menuItems[0][3].setName("Ziel:           ");
+    menuItems[0][3].setName("Flasche:");
 
     //SUB MENU - SELECT DRINK
     menuItems[1][1] =  MenuItem();
-    menuItems[1][1].setName("Bier              ");
+    menuItems[1][1].setName("Bier       ");
+    menuItems[1][1].setSubroutine(5);
 
     menuItems[1][2] =  MenuItem();
-    menuItems[1][2].setName("Wein              ");
+    menuItems[1][2].setName("Wein       ");
 
     menuItems[1][3] =  MenuItem();
-    menuItems[1][3].setName("Gin Tonic         ");
+    menuItems[1][3].setName("Gin Tonic   ");
 
 
     //SUB MENU - MODE SELECT
@@ -73,16 +78,29 @@ Navigator::Navigator(){
 
 }
 
+int Navigator::getCurrentItem(){
+    return this->currentItem;
+}
+
+int Navigator::getCurrentSubItem(){
+    return this->currentSubItem;
+}
+
 void Navigator::change(int direction){
+
+    
 
     switch (currentMode){
         
         case 0:
+            lcd.clear();
             currentItem += direction;
+            navigate();
         break;
 
         case 1:
             currentSubItem += direction;
+            navigate();
         break;
 
         case 2:
@@ -91,20 +109,18 @@ void Navigator::change(int direction){
     }
 
 
+    
+    
+}
+
+void Navigator::navigate(){
+
     if(this->currentItem < 0){this->currentItem = 3;}
     if(this->currentSubItem < 0){this->currentSubItem = 3;}
     if(this->currentSubItem <= 0 && this->currentMode == 1){this->currentSubItem = 3;}
 
     if(this->currentItem >= 4){this->currentItem = 0;}
     if(this->currentSubItem >= 4){this->currentSubItem = 1;}
-
-
-    // Serial.print("Current Item: ");
-    // Serial.println(currentItem);
-    // Serial.print("Current SubItem: ");
-    // Serial.println(currentSubItem);
-
-
 
     String arrow = "->";
 
@@ -131,13 +147,10 @@ void Navigator::change(int direction){
         lines[0].setCharAt(19, ' ');
     }
 
-
-
     displayHandler.display(lines);
     displayHandler.update(lcd);
-
-    
 }
+
 
 void Navigator::reset(){
     
@@ -161,15 +174,21 @@ void Navigator::reset(){
 
 void Navigator::click(){
 
+    MenuItem selectedItem = this->menuItems[this->currentItem][this->currentSubItem];
+
     switch (currentMode){
         
         case 0:
+        
+
+        if(this->currentItem != 0){
             currentMode = 1;
             currentSubItem = 1;
+            }
         break;
 
         case 1:
-            if(false){ //TODO: In Subroutine kann nur geschalten werden, wenn eine verfügbar ist.
+            if(selectedItem.hasSubroutine()){
                 currentMode = 2;
             }
         break;

@@ -7,7 +7,8 @@ class DisplayHandler{
         DisplayHandler(LiquidCrystal_I2C lcd);
         void update(LiquidCrystal_I2C lcd);
         void display(String lines[4]);
-        String lines[4] = {"a","b","c","d"};
+        void clear();
+        String lines[4] = {"    SmartBottle    ","     BUILD 0.1a     "," ","  (c) Adam Lamine   "};
 
     private:
         
@@ -15,15 +16,16 @@ class DisplayHandler{
 };
 
 DisplayHandler::DisplayHandler(LiquidCrystal_I2C lcd){
-
+    
 }
 
 void DisplayHandler::update(LiquidCrystal_I2C lcd){
-    
+    lcd.setCursor(0,0);
     for(int i = 0; i < 4; i++){
         lcd.setCursor(0,i);
         lcd.print(lines[i]);
     }
+    lcd.setCursor(0,0);
 }
 
 void DisplayHandler::display(String lines[4]){
@@ -34,17 +36,12 @@ void DisplayHandler::display(String lines[4]){
             this->lines[i] = "                    ";
         }
     }
-
-
-
-    // Serial.println("-----------------LINES-----------------");
-    // Serial.println(this->lines[0]);
-    // Serial.println(this->lines[1]);
-    // Serial.println(this->lines[2]);
-    // Serial.println(this->lines[3]);
-    // Serial.println("---------------------------------------");
-
 }
 
+void DisplayHandler::clear(){
+    for(int i = 0; i < 4; i++){
+            this->lines[i] = "                    ";
+    }
+}
 
 DisplayHandler displayHandler(lcd);

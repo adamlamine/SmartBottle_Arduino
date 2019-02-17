@@ -5,11 +5,22 @@ void buttonClicked(){
     navigator.change(0);
 }
 
+boolean lastheld = false;
+
 void buttonHeld(){
-    navigator.reset();
-    navigator.change(0);
+    
+    if(!lastheld){
+        navigator.reset();
+        navigator.change(0);
+    }
+
+    lastheld = true;
 }
 
 void encoderRotated(int direction){
     navigator.change(direction);
+}
+
+void buttonReleased(){
+    lastheld = false;
 }

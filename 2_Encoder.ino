@@ -68,6 +68,10 @@ void Encoder::update(){
             buttonHeld();
         break;
 
+        case(ClickEncoder::Released):
+            buttonReleased();
+        break;
+
         default:
         break;
 

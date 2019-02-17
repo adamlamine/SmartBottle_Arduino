@@ -3,16 +3,21 @@ class Navigator{
     public:
         int getCurrentItem();
         int getCurrentSubItem();
+        int getSubRoutine();
+        MenuItem getSelectedItem();
         void change(int direction);
         void click();
         void reset();
         void navigate();
+        void setMode(int mode);
+        void setSubRoutine(int subRoutine);
         Navigator();
+        int currentMode = 0; // 0 = Hauptmenü, 1 = Submenü, 2 = aktives Subprogramm
 
     private:
-        int currentMode = 0; // 0 = Hauptmenü, 1 = Submenü, 2 = aktives Subprogramm
         int currentItem = 0;
         int currentSubItem = 0;
+        int subRoutine = 0;
         MenuItem menuItems[5][4];
         
 };
@@ -45,36 +50,39 @@ Navigator::Navigator(){
 
     //SUB MENU - SELECT DRINK
     menuItems[1][1] =  MenuItem();
-    menuItems[1][1].setName("Bier       ");
-    menuItems[1][1].setSubroutine(5);
+    menuItems[1][1].setName("Wasser");
+    menuItems[1][1].setSubRoutine(1);
+    menuItems[1][1].setAlcoholPercentage(0);
 
     menuItems[1][2] =  MenuItem();
-    menuItems[1][2].setName("Wein       ");
+    menuItems[1][2].setName("Spritzer");
+    menuItems[1][2].setSubRoutine(1);
+    menuItems[1][2].setAlcoholPercentage(5.2);
 
     menuItems[1][3] =  MenuItem();
-    menuItems[1][3].setName("Gin Tonic   ");
+    menuItems[1][3].setName("Gin Tonic");
 
 
     //SUB MENU - MODE SELECT
     menuItems[2][1] =  MenuItem();
-    menuItems[2][1].setName("Limit             ");
+    menuItems[2][1].setName("Limit  ");
 
     menuItems[2][2] =  MenuItem();
-    menuItems[2][2].setName("Goal              ");
+    menuItems[2][2].setName("Goal  ");
 
     menuItems[2][3] =  MenuItem();
-    menuItems[2][3].setName("Calibration       ");
+    menuItems[2][3].setName("Calibration  ");
 
 
     //SUB MENU - MIXING ASSISTANT
     menuItems[3][1] =  MenuItem();
-    menuItems[3][1].setName("Pina Colada       ");
+    menuItems[3][1].setName("Pina Colada  ");
 
     menuItems[3][2] =  MenuItem();
-    menuItems[3][2].setName("Caipirinha        ");
+    menuItems[3][2].setName("Caipirinha  ");
 
     menuItems[3][3] =  MenuItem();
-    menuItems[3][3].setName("More Drinks       ");
+    menuItems[3][3].setName("More Drinks  ");
 
 }
 
@@ -84,6 +92,18 @@ int Navigator::getCurrentItem(){
 
 int Navigator::getCurrentSubItem(){
     return this->currentSubItem;
+}
+
+void Navigator::setMode(int mode){
+    this->currentMode = mode;
+}
+
+void Navigator::setSubRoutine(int subRoutine){
+    this->subRoutine = subRoutine;
+}
+
+int Navigator::getSubRoutine(){
+    return this->subRoutine;
 }
 
 void Navigator::change(int direction){
@@ -113,6 +133,10 @@ void Navigator::change(int direction){
     
 }
 
+MenuItem Navigator::getSelectedItem(){
+    return this->menuItems[this->currentItem][this->currentSubItem];
+}
+
 void Navigator::navigate(){
 
     if(this->currentItem < 0){this->currentItem = 3;}
@@ -132,7 +156,7 @@ void Navigator::navigate(){
                       };
 
     for(int i = 0; i < 4; i++){
-        if(i == currentSubItem && i != 0){
+        if(i == currentSubItem && currentSubItem != 0){
             lines[i] = arrow + this->menuItems[currentItem][i].getName();
         } else {
             lines[i] = this->menuItems[currentItem][i].getName();
@@ -146,7 +170,7 @@ void Navigator::navigate(){
         lines[0].setCharAt(0, ' ');
         lines[0].setCharAt(19, ' ');
     }
-
+    lcd.clear();
     displayHandler.display(lines);
     displayHandler.update(lcd);
 }
@@ -156,19 +180,33 @@ void Navigator::reset(){
     
     switch (currentMode){
         
-        case 0:
-            currentMode = 0;
-            currentSubItem = 0;
-        break;
-        case 1:
-            currentMode = 0;
-            currentSubItem = 0;
-        break;
+        
 
-        case 2:
-            currentMode = 1;
-        break;
+        // case 0:
+        //     currentSubItem = 0;
+        // break;
+        
+        // case 1:
+        //     currentSubItem = 0;
+        // break;
+
+        // case 2:
+        //     currentSubItem = 0;
+        // break;
+
+        // default:
+        //     currentSubItem = 0;
+        // break;
     }
+
+    currentMode = 0;
+    currentSubItem = 0;
+
+    lcd.clear();
+    this->navigate();
+
+    Serial.println("RESET!");
+
 
 }
 
@@ -179,17 +217,16 @@ void Navigator::click(){
     switch (currentMode){
         
         case 0:
-        
-
-        if(this->currentItem != 0){
-            currentMode = 1;
-            currentSubItem = 1;
+            if(this->currentItem != 0){
+                currentMode = 1;
+                currentSubItem = 1;
             }
         break;
 
         case 1:
             if(selectedItem.hasSubroutine()){
                 currentMode = 2;
+                this->subRoutine = selectedItem.getSubroutine();
             }
         break;
 

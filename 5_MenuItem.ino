@@ -7,14 +7,17 @@ class MenuItem{
         String getName();
         boolean hasSubroutine();
         boolean isSelectable();
-        void setSubroutine(int subroutine);
+        void setSubRoutine(int subroutine);
         void setSelectable(boolean selectable);
         int getSubroutine();
+        float getAlcoholPercentage();
+        void setAlcoholPercentage(float alcoholPercentage);
         
     private:
         String name = "";
         boolean selectable = false;
-        int subroutine;
+        int subroutine = 0;
+        float alcoholPercentage = 0;
 
 };
 
@@ -44,7 +47,7 @@ boolean MenuItem::isSelectable(){
     return this->selectable;
 };
 
-void MenuItem::setSubroutine(int subroutine){
+void MenuItem::setSubRoutine(int subroutine){
     this->subroutine = subroutine;
 };
 
@@ -55,3 +58,11 @@ void MenuItem::setSelectable(boolean selectable){
 int MenuItem::getSubroutine(){
     return this->subroutine;
 };
+
+float MenuItem::getAlcoholPercentage(){
+    return this->alcoholPercentage;
+};
+
+void MenuItem::setAlcoholPercentage(float alcoholPercentage){
+    this->alcoholPercentage = alcoholPercentage;
+}

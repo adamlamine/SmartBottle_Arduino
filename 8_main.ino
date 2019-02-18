@@ -25,16 +25,17 @@ void setup() {
 }
 
 void loop() {
-    encoder.update();
+  encoder.update();
 
-    
+  
   if(navigator.getCurrentItem() == 0){
     displayStats();
   }
 
-  doSubroutine();
+  doSubroutine(0);
 
-
+  volatilityTimer();
+  // Serial.println(drinkName);
 }
 
 void displaySplashScreen(){
@@ -43,12 +44,7 @@ void displaySplashScreen(){
   displayHandler.update(lcd);
   delay(2000);
   lcd.setCursor(0,0);
-  displayHandler.clear();
-  displayHandler.update(lcd);
-  delay(500);
   navigator.navigate();
-  lcd.setCursor(0,1);
-  displayHandler.update(lcd);
 }
 
 void displayStats(){
@@ -97,45 +93,129 @@ void displayStats(){
   lcd.setCursor(18,3);
   lcd.print("ml");
 
-
 }
 
-void doSubroutine(){
-    
-    switch(navigator.getSubRoutine()){
+void doSubroutine(int input){
 
+    
+    switch( navigator.getSubRoutine() ){
+        
+        
+        
         case 0:
         break;
 
         case 1: //GETRAENKEWAHL BESTAETIGEN
-          MenuItem currentItem = navigator.getSelectedItem();
           lcd.clear();
           lcd.setCursor(0, 0);
           lcd.print("Getraenk gewaehlt:");
           lcd.setCursor(6, 2);
-          lcd.print(currentItem.getName());
+          lcd.print(navigator.getSelectedItem().getName());
           lcd.setCursor(6, 3);
-          lcd.print(currentItem.getAlcoholPercentage());
+          lcd.print(navigator.getSelectedItem().getAlcoholPercentage());
           lcd.print("% alc");
           delay(1500);
 
+          alcoholPercentage = navigator.getSelectedItem().getAlcoholPercentage();
+          drinkName = navigator.getSelectedItem().getName();
+          
           navigator.setSubRoutine(0);
           navigator.reset();
-          
-          alcoholPercentage = currentItem.getAlcoholPercentage();
-          drinkName = currentItem.getName();
-         break;
-
-        default:
-        navigator.setSubRoutine(0);
         break;
+      
+        case 2: //MIXING ASSISTANT
 
+          if(!mixingAssistantStarted){
+            baseWeight = (int) loadCell.getWeight();
+            mixingAssistantStarted = true;
+          }
 
+          int currentWeight = (int) loadCell.getWeight();
 
+          //STATISCHER TEXT
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("MIXING: ");
+          lcd.print(navigator.getSelectedItem().getName());
+          lcd.setCursor(5, 1);
+          lcd.print("Bitte noch ");
+          lcd.setCursor(4, 3);
+          lcd.print("hinzufuegen");
 
+          //REZEPT
+          
+          int remaining = ( (baseWeight + 80) - currentWeight );
 
+          if(navigator.getSelectedItem().getName() == "Gin Tonic"){
+          
 
+          }
+          
+        break;
     }
+}
 
 
+
+
+void checkVolatility(){
+  static int lastWeight = 0;
+  static int volatilityCounter = 3;
+  static int volatilityTreshold = 7;
+  static int volatilityMeasurements = 4;
+
+  int currentWeight = (int) loadCell.getWeight();
+
+  if( abs(currentWeight - lastWeight) < volatilityTreshold){
+    volatilityCounter++;
+  } else {
+    volatilityCounter = 0;
+  }
+
+  if(volatilityCounter > volatilityMeasurements || lastWeight == 0){
+    // Serial.println("SYSTEM STABIL!");
+    weight = currentWeight;
+    updateConsumed();
+  } else {
+    // lcd.clear();
+    // lcd.setCursor(3,0);
+    //lcd.print("ERSCHUETTERUNG");
+    // lcd.setCursor(6,1);
+    //lcd.print("ERKANNT");
+    // lcd.setCursor(3,2);
+    //lcd.print("NICHT TRINKEN.");
+    // delay(1000);
+    // lcd.clear();
+    // navigator.navigate();
+  }
+  lastWeight = currentWeight;
+}
+
+
+void volatilityTimer(){
+	static int lastTime = 0;
+
+	if(millis() - lastTime >= 1000)
+	{
+		lastTime += 1000;
+    checkVolatility();
+	}
+}
+
+
+int lastWeightMeasurement;
+
+void updateConsumed(){
+
+    static int lastWeightMeasurement = -1;
+    
+    if(lastWeightMeasurement != -1 && lastWeightMeasurement > weight && abs(lastWeightMeasurement - weight) > 5){
+        float difference = lastWeightMeasurement - weight;
+        drinkConsumed += (difference/1000);
+
+        alcoholConsumed += (difference/100) * alcoholPercentage;
+    } 
+
+    lastWeightMeasurement = weight;
+    
 }

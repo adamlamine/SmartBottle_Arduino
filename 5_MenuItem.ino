@@ -19,6 +19,7 @@ class MenuItem{
         int subroutine = 0;
         float alcoholPercentage = 0;
 
+
 };
 
 MenuItem::MenuItem(){
@@ -30,6 +31,7 @@ void MenuItem::display(){
 void MenuItem::setName(String name){
     this->name = name;
 }
+
 
 String MenuItem::getName(){
     return this->name;

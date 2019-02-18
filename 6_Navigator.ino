@@ -33,10 +33,10 @@ Navigator::Navigator(){
     menuItems[1][0].setName("<   SELECT DRINK   >");
 
     menuItems[2][0] =  MenuItem();
-    menuItems[2][0].setName("<   MODE SELECT    >");
+    menuItems[2][0].setName("< MIXING ASSISTANT >");
 
     menuItems[3][0] =  MenuItem();
-    menuItems[3][0].setName("< MIXING ASSISTANT >");
+    menuItems[3][0].setName("<      SETUP       >");
 
     //SUB MENU - OVERVIEW
     menuItems[0][1] =  MenuItem();
@@ -62,27 +62,33 @@ Navigator::Navigator(){
     menuItems[1][3] =  MenuItem();
     menuItems[1][3].setName("Gin Tonic");
 
-
-    //SUB MENU - MODE SELECT
-    menuItems[2][1] =  MenuItem();
-    menuItems[2][1].setName("Limit  ");
-
-    menuItems[2][2] =  MenuItem();
-    menuItems[2][2].setName("Goal  ");
-
-    menuItems[2][3] =  MenuItem();
-    menuItems[2][3].setName("Calibration  ");
-
+    menuItems[1][3].setSubRoutine(1);
+    menuItems[1][3].setAlcoholPercentage(9.5);
 
     //SUB MENU - MIXING ASSISTANT
+    menuItems[2][1] =  MenuItem();
+    menuItems[2][1].setName("Gin Tonic");
+    menuItems[2][1].setSubRoutine(2);
+
+    menuItems[2][2] =  MenuItem();
+    menuItems[2][2].setName("Long Island");
+    menuItems[2][2].setSubRoutine(2);
+
+    menuItems[2][3] =  MenuItem();
+    menuItems[2][3].setName("Whisky Sour");
+    menuItems[2][3].setSubRoutine(2);
+    
+
+    //SUB MENU - SETUP
     menuItems[3][1] =  MenuItem();
-    menuItems[3][1].setName("Pina Colada  ");
+    menuItems[3][1].setName("Goal");
 
     menuItems[3][2] =  MenuItem();
-    menuItems[3][2].setName("Caipirinha  ");
+    menuItems[3][2].setName("Tara");
 
     menuItems[3][3] =  MenuItem();
-    menuItems[3][3].setName("More Drinks  ");
+    menuItems[3][3].setName("Calibration");
+
 
 }
 
@@ -148,39 +154,79 @@ void Navigator::navigate(){
 
     String arrow = "->";
 
-    String lines[4] = {
-                        this->menuItems[currentItem][0].getName(),
-                        this->menuItems[currentItem][1].getName(),
-                        this->menuItems[currentItem][2].getName(),
-                        this->menuItems[currentItem][3].getName()
-                      };
 
-    for(int i = 0; i < 4; i++){
-        if(i == currentSubItem && currentSubItem != 0){
-            lines[i] = arrow + this->menuItems[currentItem][i].getName();
-        } else {
-            lines[i] = this->menuItems[currentItem][i].getName();
-        }
-    }
+
+    String line0 = this->menuItems[currentItem][0].getName();
+    String line1 = this->menuItems[currentItem][1].getName();
+    String line2 = this->menuItems[currentItem][2].getName();
+    String line3 = this->menuItems[currentItem][3].getName();
 
     if(this->currentSubItem == 0){
-        lines[0].setCharAt(0, '<');
-        lines[0].setCharAt(19, '>');
+        line0.setCharAt(0, '<');
+        line0.setCharAt(19, '>');
     } else {
-        lines[0].setCharAt(0, ' ');
-        lines[0].setCharAt(19, ' ');
+        line0.setCharAt(0, ' ');
+        line0.setCharAt(19, ' ');
     }
+
+    if(currentSubItem == 1){
+        line1 = arrow + line1;
+    } else if (currentSubItem == 2){
+        line2 = arrow + line2;
+    } else if (currentSubItem == 3){
+        line3 = arrow + line3;
+    }
+
+
     lcd.clear();
-    displayHandler.display(lines);
-    displayHandler.update(lcd);
+
+    lcd.setCursor(0,0);
+    lcd.print(line0);
+    lcd.setCursor(0,1);
+    lcd.print(line1);
+    lcd.setCursor(0,2);
+    lcd.print(line2);
+    lcd.setCursor(0,3);
+    lcd.print(line3);
+    
+    lcd.setCursor(0,0);
+    mixingAssistantStarted = false;
+
+    //HIER RUHT DIE SAUBERE LÖSUNG STRINGS ANZUZEIGEN. ICH VERSTEHE CPP STRING HANDLING LEIDER NICHT :(
+    // String lines[4] = {
+    //                     this->menuItems[currentItem][0].getName(),
+    //                     this->menuItems[currentItem][1].getName(),
+    //                     this->menuItems[currentItem][2].getName(),
+    //                     this->menuItems[currentItem][3].getName()
+    //                   };
+
+    // for(int i = 0; i < 4; i++){
+    //     if(i == currentSubItem && currentSubItem != 0){
+    //         lines[i] = arrow + this->menuItems[currentItem][i].getName();
+    //     } else {
+    //         lines[i] = this->menuItems[currentItem][i].getName();
+    //     }
+    // }
+
+    // if(this->currentSubItem == 0){
+    //     lines[0].setCharAt(0, '<');
+    //     lines[0].setCharAt(19, '>');
+    // } else {
+    //     lines[0].setCharAt(0, ' ');
+    //     lines[0].setCharAt(19, ' ');
+    // }
+
+    // for(int i = 0; i < 4; i++){
+    //     lcd.setCursor(0, i);
+    //     lcd.print(lines[i]);
+    // }
+    
 }
 
 
 void Navigator::reset(){
     
-    switch (currentMode){
-        
-        
+    // switch (currentMode){
 
         // case 0:
         //     currentSubItem = 0;
@@ -197,17 +243,16 @@ void Navigator::reset(){
         // default:
         //     currentSubItem = 0;
         // break;
-    }
+    // }
 
-    currentMode = 0;
-    currentSubItem = 0;
+    this->currentMode = 0;
+    this->currentSubItem = 0;
+    this->subRoutine = 0;
+    
+    mixingAssistantStarted = false;
 
     lcd.clear();
     this->navigate();
-
-    Serial.println("RESET!");
-
-
 }
 
 void Navigator::click(){
@@ -232,7 +277,6 @@ void Navigator::click(){
 
         case 2:
         break;
-
     }
-
+    
 }

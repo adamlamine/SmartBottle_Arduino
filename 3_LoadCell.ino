@@ -21,7 +21,7 @@ LoadCell::LoadCell(int DT_PIN, int SCK_PIN, int calibrationFactor){
   this->scale = HX711(DT_PIN, SCK_PIN);
   
   this->scale.set_scale(calibrationFactor);
-  this->scale.tare();
+  //this->scale.tare();
 }
 
 void LoadCell::setCalibrationFactor(int calibrationFactor){
